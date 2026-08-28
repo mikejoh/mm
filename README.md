@@ -1,6 +1,7 @@
 # mm
 
 [![CI](https://github.com/mikejoh/mm/actions/workflows/go.yml/badge.svg)](https://github.com/mikejoh/mm/actions/workflows/go.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
 <img src="https://github.com/mikejoh/mm/assets/899665/0158ee4b-e5b1-4f70-ae04-82a01217de34" alt="mm" />
