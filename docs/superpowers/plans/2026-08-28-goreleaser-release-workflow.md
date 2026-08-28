@@ -108,7 +108,7 @@ git commit -m "ci: add goreleaser config for grouped-changelog releases" --trail
 **Interfaces:**
 - Consumes: `.goreleaser.yaml` from Task 1 (implicitly, via `goreleaser release --clean` reading the repo-root config).
 
-- [ ] **Step 1: Write `.github/workflows/goreleaser.yml`**
+- [x] **Step 1: Write `.github/workflows/goreleaser.yml`**
 
 ```yaml
 name: goreleaser
@@ -143,12 +143,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-- [ ] **Step 2: Validate YAML syntax**
+- [x] **Step 2: Validate YAML syntax**
 
 Run: `python3 -c "import yaml; yaml.safe_load(open('.github/workflows/goreleaser.yml'))" && echo OK`
-Expected: `OK` with no exception.
+Actual: `OK`
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add .github/workflows/goreleaser.yml
