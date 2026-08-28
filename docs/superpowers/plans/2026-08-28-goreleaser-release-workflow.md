@@ -27,7 +27,7 @@
 **Interfaces:**
 - Produces: a GoReleaser config consumed by the `goreleaser/goreleaser-action@v7` step added in Task 2 (via `args: release --clean`).
 
-- [ ] **Step 1: Write `.goreleaser.yaml`**
+- [x] **Step 1: Write `.goreleaser.yaml`**
 
 ```yaml
 version: 2
@@ -38,8 +38,6 @@ release:
     name: mm
   name_template: 'v{{ .Tag }}'
 builds:
-  - skip: true
-archives:
   - skip: true
 changelog:
   use: github
@@ -55,17 +53,47 @@ changelog:
       order: 999
 ```
 
-- [ ] **Step 2: Validate config syntax**
+Deviation from the original plan: no `archives: [{skip: true}]` block.
+GoReleaser v2.14's `Archive` config has no `skip` field (`goreleaser check`
+fails with `field skip not found in type config.Archive`), and with
+`builds` skipped there's nothing for the archive pipe to package anyway —
+confirmed no error with `archives` omitted entirely.
+
+- [x] **Step 2: Validate config syntax**
 
 Run: `goreleaser check`
-Expected output: `1 configuration file(s) validated` with no errors (a warning that the config has no builds is fine to ignore — that's intentional here).
+Actual output:
+```
+  • checking                                  path=.goreleaser.yaml
+  • 1 configuration file(s) validated
+  • thanks for using GoReleaser!
+```
 
-- [ ] **Step 3: Dry-run the release to inspect the changelog**
+- [x] **Step 3: Dry-run the release to inspect the changelog**
 
-Run: `goreleaser release --snapshot --clean --skip=publish`
-Expected: command exits 0. Since `builds`/`archives` are skipped, no binaries/archives are produced under `dist/`; check `dist/artifacts.json` and the command's log output for the rendered changelog groups (Features/Bug fixes/Other) to confirm the regexps match this repo's real commit history (e.g. recent `fix:` commits should land under "Bug fixes").
+`--snapshot` mode skips changelog generation entirely (it's tied to a real
+tag comparison), so the dry run instead used:
+`GITHUB_TOKEN=$(gh auth token) goreleaser release --clean --skip=validate,publish,announce`
+— this renders the real changelog (comparing the two most recent existing
+tags, v0.2.0..v0.3.0) without publishing anything. Result in
+`dist/CHANGELOG.md`:
+```
+## Changelog
+### Bug fixes
+* 130ba9e...: fix: bump golangci-lint-action to v9 for golangci-lint v2 support (@mikejoh)
+* 833debf...: fix: pin golangci-lint to latest and scope to new issues only (@mikejoh)
+* be9871e...: fix: prevent duplicate metric registration panics, add tests and LICENSE (@mikejoh)
+* 939ec2d...: fix: use stable Go toolchain in CI instead of go.mod's minimum version (@mikejoh)
+### Other
+* 1ffbdc4...: Add CI workflow, dependabot config, and CI badge (@mikejoh)
+* 43bde7c...: Merge pull request #1 from mikejoh/chore/standardize-ci-tooling (@mikejoh)
+* aa4ed0b...: Merge pull request #4 from mikejoh/chore/golangci-lint-action-v9 (@mikejoh)
+* 9fa9117...: chore(deps): bump github.com/prometheus/client_golang to v1.19.1 (@mikejoh)
+```
+Grouping confirmed correct: `fix:` commits under Bug fixes, everything else
+under Other. `dist/` removed afterward (dry-run output, not committed).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add .goreleaser.yaml

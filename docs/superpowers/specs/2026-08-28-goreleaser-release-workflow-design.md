@@ -27,8 +27,6 @@ release:
   name_template: 'v{{ .Tag }}'
 builds:
   - skip: true
-archives:
-  - skip: true
 changelog:
   use: github
   sort: asc
@@ -43,9 +41,12 @@ changelog:
       order: 999
 ```
 
-- `builds`/`archives` are explicitly skipped rather than omitted, so
-  GoReleaser doesn't try to auto-detect a main package (it would otherwise
-  find `examples/basic/main.go` and attempt to build/release that).
+- `builds` is explicitly skipped rather than omitted, so GoReleaser doesn't
+  try to auto-detect a main package (it would otherwise find
+  `examples/basic/main.go` and attempt to build/release that). `archives`
+  is omitted entirely: GoReleaser v2.14's `Archive` config has no `skip`
+  field, and with zero builds there's nothing for the archive pipe to
+  package anyway (verified via `goreleaser release --clean --skip=validate,publish`).
 - `changelog.use: github` pulls commit/PR metadata from the GitHub API
   (available via the workflow's `GITHUB_TOKEN`) for richer changelog entries
   than raw `git log`.

@@ -1,0 +1,21 @@
+version: 2
+project_name: mm
+release:
+  github:
+    owner: mikejoh
+    name: mm
+  name_template: 'v{{ .Tag }}'
+builds:
+  - skip: true
+changelog:
+  use: github
+  sort: asc
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\(.+\))??!?:.+$'
+      order: 0
+    - title: Bug fixes
+      regexp: '^.*?fix(\(.+\))??!?:.+$'
+      order: 1
+    - title: Other
+      order: 999
